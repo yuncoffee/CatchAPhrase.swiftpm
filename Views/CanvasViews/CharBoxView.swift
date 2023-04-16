@@ -7,16 +7,15 @@
 
 import SwiftUI
 import Foundation
-import AVFoundation
 
 struct CharBoxView: View {
     
     @EnvironmentObject
     var globalStore: GlobalStore
-    let speechSynthesizer = AVSpeechSynthesizer()
-        
+    
     @State
-    private var draggedOffset = CGSize.zero
+    private
+    var draggedOffset = CGSize.zero
     
     @State
     private var translationY = 0.0 {
@@ -30,27 +29,6 @@ struct CharBoxView: View {
     
     @State
     private var isSubmitAble = false
-
-    var drag: some Gesture {
-      DragGesture()
-        .onChanged { gesture in
-            translationY = gesture.translation.height
-            draggedOffset = gesture.translation
-        }
-        .onEnded { gesture in
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.4, blendDuration: 0)) {
-                if isSubmitAble {
-                    globalStore.compareTitleWithWord()
-                }
-                
-                draggedOffset = .zero
-                translationY = .zero
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                    isSubmitAble = false
-                }
-            }
-        }
-    }
 
     var body: some View {
         ZStack() {
@@ -78,9 +56,7 @@ extension CharBoxView {
     
     var ReadCurrentCharView: some View {
         Button {
-            let speechUtterance = AVSpeechUtterance(string: globalStore.currentCharcter)
-                            speechUtterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")
-                            speechSynthesizer.speak(speechUtterance)
+            globalStore.readContentToSiri(contents: globalStore.currentCharcter)
         } label: {
             Image(systemName: "play.fill")
                 .foregroundColor(CustomColor.black)
@@ -88,3 +64,26 @@ extension CharBoxView {
     }
 }
 
+// MARK: Gesture
+extension CharBoxView {
+    var drag: some Gesture {
+      DragGesture()
+        .onChanged { gesture in
+            translationY = gesture.translation.height
+            draggedOffset = gesture.translation
+        }
+        .onEnded { gesture in
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.4, blendDuration: 0)) {
+                if isSubmitAble {
+                    globalStore.compareTitleWithWord()
+                }
+                
+                draggedOffset = .zero
+                translationY = .zero
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    isSubmitAble = false
+                }
+            }
+        }
+    }
+}

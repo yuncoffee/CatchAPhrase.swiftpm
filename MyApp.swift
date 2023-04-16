@@ -6,8 +6,6 @@ struct MyApp: App {
     let globalStore = GlobalStore()
     
     init() {
-        CustomFont.registerFonts(fontName: "NanumMyeongjo")
-        CustomFont.registerFonts(fontName: "NanumMyeongjoBold")
         CustomFont.registerFonts(fontName: "NanumMyeongjo-YetHangul")
         CustomFont.registerFonts(fontName: "LibreBaskerville-Regular")
     }

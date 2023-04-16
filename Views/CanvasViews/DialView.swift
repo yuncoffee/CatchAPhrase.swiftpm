@@ -79,31 +79,11 @@ struct DialView: View {
                 let char = krScalers[2] == 0
                 ? String(firstScaler).appending(String(secondaryScaler))
                 : String(firstScaler).appending(String(secondaryScaler)).appending(String(thirdScaler))
-                
-                print(char.unicodeScalars)
-                
-                globalStore.currentCharcter = char // char[char.startIndex] // 조합된 스트링
+
+                globalStore.currentCharcter = char
             }
         }
     }
-    
-    @State
-    var currentCharcter = "나"
-
-    @State
-    var isRightDialActive = false
-    
-    @State
-    private var isDetectingLongPress = false
-    
-    @State private var location: CGPoint? = nil {
-        didSet {
-            print(location!)
-        }
-    }
-        
-    @State var showCustomContextMenu = false
-    @State var longPressLocation = CGPoint.zero
     
     var body: some View {
             VStack(alignment: .leading, spacing: 0) {
@@ -126,7 +106,6 @@ struct DialView: View {
                             .gesture(rotationRight)
                             .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: totalRotates[1])
                             .position(x: geometry.size.width + 60, y: geometry.size.height / 2 - 24)
-                        // charBox
                         CharBoxView()
                             .position(x: geometry.size.width / 2, y: geometry.size.height / 2 - 24)
                         // btm

@@ -6,8 +6,12 @@
 //
 
 import Foundation
+import AVFoundation
 
 class GlobalStore: ObservableObject {
+    
+    private let speechSynthesizer = AVSpeechSynthesizer()
+    
     
     @Published
     var isLinkPageActive = false
@@ -26,6 +30,10 @@ class GlobalStore: ObservableObject {
             }
         }
     }
+    
+    @Published
+    var currentPoemIndex = 0
+    
     
     @Published
     var currentIdx = 0
@@ -48,5 +56,13 @@ class GlobalStore: ObservableObject {
         } else {
             print("틀려씀")
         }
+    }
+}
+
+extension GlobalStore {
+    func readContentToSiri(contents: String) {
+        let speechUtterance = AVSpeechUtterance(string: contents)
+        speechUtterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")
+        speechSynthesizer.speak(speechUtterance)
     }
 }
