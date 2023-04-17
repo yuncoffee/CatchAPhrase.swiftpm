@@ -8,11 +8,16 @@ struct ContentView: View {
     @State
     var showDetail = false
     
+    @State
+    private var showPopover: Bool = false
+
+    
     var body: some View {
         HomeContainerView(
             HomeTitleView,
             StartButtonView
         )
+        
     }
 }
 
@@ -34,15 +39,21 @@ extension ContentView {
     
     var HomeTitleView: some View {
         ZStack {
-            HStack(spacing: -4) {
-                ForEach(0..<2) { _ in
-                    BoxDecorationView()
+            if globalStore.deviceOS == "iOS" {
+                BoxDecorationView()
+            } else {
+                HStack(spacing: -4) {
+                    ForEach(0..<2) { _ in
+                        BoxDecorationView()
+                    }
                 }
             }
             Text("Catch a phrase")
                 .font(.custom("LibreBaskerville-Regular", size: 64))
+                .multilineTextAlignment(.center)
+                
         }
-        .padding(.bottom, 100)
+        .padding(.bottom, globalStore.deviceOS == "iOS" ? 32 : 100)
     }
     
     func HomeContainerView (_ homeTitleView: any View, _ startButtonView: any View) -> some View {
@@ -50,9 +61,25 @@ extension ContentView {
             if #available(iOS 16.0, *)
             {
                 VStack {
-                    VStack {
-                        AnyView(homeTitleView)
-                        AnyView(startButtonView)
+                    ZStack{
+                        Button {
+                            self.showPopover = true
+                        } label: {
+                            Image(systemName: "questionmark.circle")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
+                                .foregroundColor(CustomColor.gray05)
+                        }
+                        .frame(width: 40, height: 40)
+                        .sheet(isPresented: self.$showPopover) {
+                            Text("Popover")
+                        }
+                        .zIndex(1)
+                        VStack {
+                            AnyView(homeTitleView)
+                            AnyView(startButtonView)
+                        }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(CustomColor.gray01)

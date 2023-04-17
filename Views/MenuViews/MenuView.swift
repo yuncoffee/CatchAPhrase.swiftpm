@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct MenuView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.presentationMode)
+    var presentationMode
 
     @StateObject
     var poemStore = PoemStore()
@@ -35,7 +36,9 @@ extension MenuView {
     }
     
     var StageListView: some View {
-        LazyVGrid(columns: [GridItem(.fixed(240), spacing: 24), GridItem(.fixed(240), spacing: 24)], spacing: 24) {
+        let iOS = globalStore.deviceOS == "iOS"
+        
+        return LazyVGrid(columns: iOS ? [GridItem(.fixed(320), spacing: 24)] : [GridItem(.fixed(240), spacing: 24), GridItem(.fixed(240), spacing: 24)], spacing: 24) {
             ForEach(0..<4) { index in
                 ZStack {
                     BoxDecorationView(size: 240)
@@ -53,14 +56,37 @@ extension MenuView {
     
     func MenuContainerView( _ stageListView: any View, _ backLinkButtonView: any View) -> some View {
         GeometryReader { geometry in
+            let iOS = globalStore.deviceOS == "iOS"
+            
             if #available(iOS 16.0, *) {
                 ZStack {
-                    VStack {
-                        AnyView(stageListView)
+                    if iOS {
+                        VStack {
+                            GradientBoxView()
+                                .frame(maxWidth: .infinity, maxHeight: 40)
+                                .rotationEffect(Angle.degrees(180))
+                                .offset(y: 40)
+                                .zIndex(1)
+                            ScrollView {
+                                AnyView(stageListView)
+                                    .padding(.vertical, 24)
+                            }
+                            GradientBoxView()
+                                .frame(maxWidth: .infinity, maxHeight: 40)
+                                .offset(y:-40)
+                        }
+
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(CustomColor.gray01)
+                        .cornerRadius(4)
+                    } else {
+                        VStack {
+                            AnyView(stageListView)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(CustomColor.gray01)
+                        .cornerRadius(4)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(CustomColor.gray01)
-                    .cornerRadius(4)
                     AnyView(backLinkButtonView)
                 }
                 .toolbar(.hidden, for: .navigationBar)

@@ -18,9 +18,6 @@ struct ScriptView: View {
     @EnvironmentObject
     var poemStore: PoemStore
     
-    var gradientStart = Color(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 0))
-    var gradientEnd = Color(#colorLiteral(red: 0.9725490196, green: 0.9725490196, blue: 0.9725490196, alpha: 1))
-    
     @State
     private var scrollOffset = CGPoint()
     
@@ -29,7 +26,9 @@ struct ScriptView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            ScriptHeaderView
+            if globalStore.deviceOS != "iOS" {
+                ScriptHeaderView
+            }
             PoemScriptView
             ScriptFooterView
         }
@@ -44,11 +43,9 @@ extension ScriptView {
     var ScriptHeaderView: some View {
         HStack(alignment: .top) {
             BackButtonView {
-                // TODO: 초기화 시키는 로직 수정
                 presentationMode.wrappedValue.dismiss()
-                globalStore.isFinished = false
-                globalStore.correctYetWord = "가나다"
-                globalStore.correctWord = ""
+                globalStore.resetDialStatus()
+                
             }
         }
         .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
@@ -59,7 +56,7 @@ extension ScriptView {
         
         return ZStack(alignment: .bottomLeading) {
             OffsetObservingScrollView(offset: $scrollOffset, length: $baseScrollOffset) {
-                CustomText(value: poem.contents, fontSize: 24)
+                CustomText(value: poem.krInfo.1, fontSize: 24)
                     .foregroundColor(
                         globalStore.isFinished
                             ? CustomColor.gray06
@@ -67,28 +64,18 @@ extension ScriptView {
                     .padding(.bottom, 200)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            GradientBoxView
+            GradientBoxView()
+                .opacity(globalStore.isFinished ? 0.1 : 1)
             PoemDetailInfoView
             
         }
         .frame(alignment: .bottomLeading)
     }
     
-    var GradientBoxView: some View {
-        Rectangle()
-            .fill(LinearGradient(
-              gradient: .init(colors: [gradientStart, gradientEnd]),
-              startPoint: .init(x: 0.5, y: 0),
-              endPoint: .init(x: 0.5, y: 0.6)
-            ))
-            .frame(height: 200)
-            .opacity(globalStore.isFinished ? 0.1 : 1)
-    }
-    
     var PoemDetailInfoView: some View {
         let poem = poemStore.poems[globalStore.currentPoemIndex]
 
-        return CustomText(value: "\(poem.name) (\(poem.author))", fontSize: 18)
+        return CustomText(value: "\(poem.krInfo.0) (\(poem.krInfo.2))", fontSize: 18)
             .foregroundColor(CustomColor.gray06)
             .opacity(baseScrollOffset < scrollOffset.y ? 1 : 0)
             .animation(.easeIn, value: scrollOffset)
@@ -96,18 +83,19 @@ extension ScriptView {
     
     var ScriptFooterView: some View {
         let poem = poemStore.poems[globalStore.currentPoemIndex]
+        let iOS = globalStore.deviceOS == "iOS"
         return HStack(alignment: .top) {
             Button {
-                globalStore.readContentToSiri(contents: poem.contents)
+                globalStore.readContentToSiri(contents: poem.krInfo.1)
             } label: {
-                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                Image(systemName: "play.fill")
+                    .foregroundColor(CustomColor.black)
             }
             .frame(width: 40, height: 40)
-            .foregroundColor(CustomColor.gray05)
-            .border(CustomColor.gray03, width: 2)
-            .cornerRadius(4)
+            .background(CustomColor.siri_btn)
+            .cornerRadius(50)
         }
-        .frame(maxWidth: .infinity, minHeight: 48, alignment: .trailing)
+        .frame(maxWidth: .infinity, minHeight: iOS ? 0 : 48, alignment: .trailing)
         .opacity(globalStore.isFinished ? 1 : 0)
     }
 }

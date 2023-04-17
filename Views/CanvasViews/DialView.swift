@@ -13,110 +13,22 @@ struct DialView: View {
     @EnvironmentObject
     var globalStore: GlobalStore
     
-    @State
-    var totalRotates = [CGSize.zero, CGSize.zero, CGSize.zero] {
-        didSet {
-            if prevRotates[0].height + 32 < totalRotates[0].height {
-                prevRotates[0] = totalRotates[0]
-                krScalers[0] += 1
-            }
-            if prevRotates[0].height - 32 > totalRotates[0].height {
-                prevRotates[0] = totalRotates[0]
-                krScalers[0] -= 1
-            }
-            if prevRotates[1].height + 32 < totalRotates[1].height {
-                prevRotates[1] = totalRotates[1]
-                krScalers[1] += 1
-            }
-            if prevRotates[1].height - 32 > totalRotates[1].height {
-                prevRotates[1] = totalRotates[1]
-                krScalers[1] -= 1
-            }
-            if prevRotates[2].width + 32 < totalRotates[2].width {
-                prevRotates[2] = totalRotates[2]
-                krScalers[2] += 1
-            }
-            if prevRotates[2].width - 32 > totalRotates[2].width {
-                prevRotates[2] = totalRotates[2]
-                krScalers[2] -= 1
-            }
-        }
-    }
+    @StateObject
+    var dialStore = DialStore()
     
     @State
-    var prevRotates = [CGSize.zero, CGSize.zero, CGSize.zero] {
-        didSet {
-            AudioServicesPlaySystemSoundWithCompletion(1157, nil);
-        }
-    }
-    
-    @State
-    var currentRotates = [CGSize.zero, CGSize.zero, CGSize.zero]
-    
-    @State
-    var krScalers = [0, 0, 0] {
-        didSet {
-            if krScalers[0] < 0 {
-                krScalers[0] = 18
-            } else if krScalers[0] > 18 {
-                krScalers[0] = 0
-            }
-            if krScalers[1] < 0 {
-                krScalers[1] = 20
-            } else if krScalers[1] > 20 {
-                krScalers[1] = 0
-            }
-            if krScalers[2] < 0 {
-                krScalers[2] = 27
-            } else if krScalers[2] > 27 {
-                krScalers[2] = 0
-            }
-            
-            if let firstScaler = Unicode.Scalar(0x1100 + krScalers[0]),
-               let secondaryScaler = Unicode.Scalar(0x1161 + krScalers[1]),
-               let thirdScaler = Unicode.Scalar(0x11a6 + 1 + krScalers[2])
-            {
-                let char = krScalers[2] == 0
-                ? String(firstScaler).appending(String(secondaryScaler))
-                : String(firstScaler).appending(String(secondaryScaler)).appending(String(thirdScaler))
-
-                globalStore.currentCharcter = char
-            }
-        }
-    }
+    private var isAnimationStart = false
     
     var body: some View {
-            VStack(alignment: .leading, spacing: 0) {
-                CurrentScriptHeaderView
-                Divider()
-                    .frame(height: 2)
-                    .background(CustomColor.gray04)
-                GeometryReader { geometry in
-                    ZStack {
-                        // left
-                        CharDialView
-                            .rotationEffect(Angle(degrees: Double(totalRotates[0].height)))
-                            .gesture(rotationLeft)
-                            .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: totalRotates[0])
-                            .position(x: -60, y: geometry.size.height / 2 - 24)
-                            
-                        // right
-                        CharDialView
-                            .rotationEffect(Angle(degrees: Double(-totalRotates[1].height)))
-                            .gesture(rotationRight)
-                            .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: totalRotates[1])
-                            .position(x: geometry.size.width + 60, y: geometry.size.height / 2 - 24)
-                        CharBoxView()
-                            .position(x: geometry.size.width / 2, y: geometry.size.height / 2 - 24)
-                        // btm
-                        CharDialView
-                            .rotationEffect(Angle(degrees: Double(totalRotates[2].width)))
-                            .gesture(rotationBtm)
-                            .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: totalRotates[2])
-                            .position(x: geometry.size.width / 2, y: geometry.size.height / 2 + 360)
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        VStack(alignment: .leading, spacing: 0) {
+            CurrentScriptHeaderView
+            Divider()
+                .frame(height: 2)
+                .background(CustomColor.gray04)
+            CurrentDialView
+        }
+        .onReceive(dialStore.$krScalers) { krScalers in
+            dialStore.updateCurrentCharcter(globalStore: globalStore)
         }
     }
 }
@@ -124,19 +36,63 @@ struct DialView: View {
 
 // MARK: View
 extension DialView {
+    
+    var CurrentDialView: some View {
+        GeometryReader { geometry in
+            ZStack {
+                let ios = globalStore.deviceOS == "iOS"
+                // left
+                CharDialView
+                    .rotationEffect(Angle(degrees: Double(dialStore.totalRotates[0].height)))
+                    .gesture(rotationLeft)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: dialStore.totalRotates[0])
+                    .position(x: ios ? -132 : -60, y: geometry.size.height / 2 - 24)
+
+                
+                // right
+                CharDialView
+                    .rotationEffect(Angle(degrees: Double(-dialStore.totalRotates[1].height)))
+                    .gesture(rotationRight)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: dialStore.totalRotates[1])
+                    .position(x: ios ? geometry.size.width + 132 : geometry.size.width + 60, y: geometry.size.height / 2 - 24)
+
+                // btm
+                CharDialView
+                    .rotationEffect(Angle(degrees: Double(dialStore.totalRotates[2].width)))
+                    .gesture(rotationBtm)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: dialStore.totalRotates[2])
+                    .position(x: geometry.size.width / 2, y: ios ? geometry.size.height / 2 + 340 : geometry.size.height / 2 + 360)
+                CharBoxView(krScalers: $dialStore.krScalers)
+                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2 - 24)
+                    .zIndex(-1)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
     var CurrentScriptHeaderView: some View {
         GeometryReader { geometry in
+
             HStack(spacing: 0) {
                 Text(globalStore.correctWord)
                     .font(.custom("NanumMyeongjo-YetHangul", size: 64))
                     .foregroundColor(CustomColor.black)
                     .multilineTextAlignment(.center)
                 Text(globalStore.correctYetWord)
-                    .font(Font.custom("NanumMyeongjo-YetHangul", size: 64))
-                    .foregroundColor(CustomColor.gray03)
+                    .font(Font.custom("NanumMyeongjo-YetHangul", size:64))
+                    .foregroundColor(isAnimationStart ? .red : CustomColor.gray03)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .scaleEffect(globalStore.isWrongAnswerSubmited)
+            .animation(.spring(response: 0.1, dampingFraction: 0.2, blendDuration: 0).repeatCount(3, autoreverses: true), value: globalStore.isWrongAnswerSubmited)
+            .onChange(of: globalStore.isWrongAnswerSubmited) { newValue in
+                if newValue == 0.9 {
+                    isAnimationStart = true
+                } else {
+                    isAnimationStart = false
+                }
+            }
         }
         .frame(maxHeight: 100)
         .padding(.vertical, 16)
@@ -148,9 +104,9 @@ extension DialView {
                 let isMarkableTic = deg % 4 == 0
                 if deg % 6 == 0 {
                     Rectangle()
-                        .frame(width: isMarkableTic ? 380 : 385, height: isMarkableTic ? 2 : 4 )
+                        .frame(width: isMarkableTic ? 380 : 385, height: isMarkableTic ? 2 : 4)
                         .rotationEffect(Angle(degrees: Double(deg)))
-                        .foregroundColor(isMarkableTic ? CustomColor.gray04 : CustomColor.black )
+                        .foregroundColor(isMarkableTic ? CustomColor.gray04 : CustomColor.black)
                 }
             }
             Circle()
@@ -165,31 +121,31 @@ extension DialView {
     var rotationLeft: some Gesture {
         DragGesture()
             .onChanged { value in
-                totalRotates[0].height = value.translation.height + currentRotates[0].height
+                dialStore.totalRotates[0].height = value.translation.height + dialStore.currentRotates[0].height
                 
             }
             .onEnded { value in
-                currentRotates[0] = totalRotates[0]
+                dialStore.currentRotates[0] = dialStore.totalRotates[0]
             }
     }
     var rotationRight: some Gesture {
         DragGesture()
             .onChanged { value in
-                totalRotates[1].height = value.translation.height + currentRotates[1].height
+                dialStore.totalRotates[1].height = value.translation.height + dialStore.currentRotates[1].height
                 
             }
             .onEnded { value in
-                currentRotates[1] = totalRotates[1]
+                dialStore.currentRotates[1] = dialStore.totalRotates[1]
             }
     }
     var rotationBtm: some Gesture {
         DragGesture()
             .onChanged { value in
-                totalRotates[2].width = value.translation.width + currentRotates[2].width
+                dialStore.totalRotates[2].width = value.translation.width + dialStore.currentRotates[2].width
                 
             }
             .onEnded { value in
-                currentRotates[2] = totalRotates[2]
+                dialStore.currentRotates[2] = dialStore.totalRotates[2]
             }
     }
 }

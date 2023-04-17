@@ -9,9 +9,9 @@ import Foundation
 
 struct PoemInfo: Identifiable {
     let id = UUID()
-    var name: String
-    var author: String
-    var contents: String
+    // 제목 / 내용 / 저자
+    var krInfo: (String, String, String)
+    var enInfo: (String, String, String)
     var firstPhrase: String
     var thumbChar: String
 }

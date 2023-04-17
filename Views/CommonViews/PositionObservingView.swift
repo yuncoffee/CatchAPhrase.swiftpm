@@ -9,14 +9,15 @@ import SwiftUI
 
 struct PositionObservingView<Content: View>: View {
     var coordinateSpace: CoordinateSpace
-    @Binding var position: CGPoint {
-        didSet {
-            print("position", position)
-        }
-    }
-    @Binding var length: Double
     
-    @ViewBuilder var content: () -> Content
+    @Binding
+    var position: CGPoint
+    
+    @Binding
+    var length: Double
+    
+    @ViewBuilder
+    var content: () -> Content
 
     var body: some View {
         content()
@@ -49,9 +50,15 @@ private extension PositionObservingView {
 struct OffsetObservingScrollView<Content: View>: View {
     var axes: Axis.Set = [.vertical]
     var showsIndicators = true
-    @Binding var offset: CGPoint
-    @Binding var length: Double
-    @ViewBuilder var content: () -> Content
+    
+    @Binding
+    var offset: CGPoint
+    
+    @Binding
+    var length: Double
+    
+    @ViewBuilder
+    var content: () -> Content
 
     private let coordinateSpaceName = UUID()
 

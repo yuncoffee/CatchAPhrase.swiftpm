@@ -13,6 +13,9 @@ struct CharBoxView: View {
     @EnvironmentObject
     var globalStore: GlobalStore
     
+    @Binding
+    var krScalers: [Int]
+    
     @State
     private
     var draggedOffset = CGSize.zero
@@ -20,8 +23,10 @@ struct CharBoxView: View {
     @State
     private var translationY = 0.0 {
         didSet {
+            let ios = globalStore.deviceOS == "iOS"
+            let offset: Double = ios ? -240 : -320
             print(translationY)
-            if translationY < -320 {
+            if translationY < offset {
                 isSubmitAble = true
             }
         }
@@ -31,14 +36,12 @@ struct CharBoxView: View {
     private var isSubmitAble = false
 
     var body: some View {
+        let ios = globalStore.deviceOS == "iOS"
+        
         ZStack() {
-            BoxDecorationView()
+            BoxDecorationView(size: ios ? 240 : 320)
             boxContentsView
             ReadCurrentCharView
-                .frame(width: 40, height: 40)
-                .background(CustomColor.siri_btn)
-                .cornerRadius(50)
-                .position(x: 300 - 12, y: 300 - 12)
         }
         .frame(width: 320, height: 320)
     }
@@ -47,7 +50,9 @@ struct CharBoxView: View {
 // MARK: Views
 extension CharBoxView {
     var boxContentsView: some View {
-        CustomText(value: globalStore.currentCharcter, fontSize: draggedOffset.height < -100 ? 64 : 200)
+        let ios = globalStore.deviceOS == "iOS"
+        
+        return CustomText(value: globalStore.currentCharcter, fontSize: draggedOffset.height < -100 ? 64 : ios ? 160 : 200)
             .offset(draggedOffset)
             .gesture(drag)
             .animation(.easeIn(duration: 0.1), value: draggedOffset)
@@ -55,12 +60,19 @@ extension CharBoxView {
     }
     
     var ReadCurrentCharView: some View {
-        Button {
+        let ios = globalStore.deviceOS == "iOS"
+        
+        return Button {
             globalStore.readContentToSiri(contents: globalStore.currentCharcter)
         } label: {
             Image(systemName: "play.fill")
                 .foregroundColor(CustomColor.black)
+            
         }
+        .frame(width: 40, height: 40)
+        .background(CustomColor.siri_btn)
+        .cornerRadius(50)
+        .position(x: ios ? 260 - 12 : 300 - 12, y: ios ? 260 - 12 : 300 - 12)
     }
 }
 
@@ -76,6 +88,7 @@ extension CharBoxView {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.4, blendDuration: 0)) {
                 if isSubmitAble {
                     globalStore.compareTitleWithWord()
+                    krScalers = [0, 0, 0]
                 }
                 
                 draggedOffset = .zero

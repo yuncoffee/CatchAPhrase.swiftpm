@@ -8,6 +8,7 @@ struct MyApp: App {
     init() {
         CustomFont.registerFonts(fontName: "NanumMyeongjo-YetHangul")
         CustomFont.registerFonts(fontName: "LibreBaskerville-Regular")
+        globalStore.deviceOS = UIDevice.current.systemName
     }
     
     var body: some Scene {
