@@ -73,8 +73,9 @@ extension ContentView {
                         }
                         .frame(width: 40, height: 40)
                         .sheet(isPresented: self.$showPopover) {
-                            Text("Popover")
+                            AppDescriptionView
                         }
+                        .position(x: geometry.size.width - 40 - 40, y: 32)
                         .zIndex(1)
                         VStack {
                             AnyView(homeTitleView)
@@ -91,5 +92,44 @@ extension ContentView {
                 
             }
         }
+    }
+}
+
+
+extension ContentView {
+    var AppDescriptionView: some View {
+        VStack {
+            ScrollView {
+                Text(
+                    """
+                    Hello, I’m Coffee.
+                    
+                    I'd like to introduce interesting Korean and contents in Korean to you.
+                    
+                    There are various Korean contents, but among them,
+                    I will introduce Korean poems where words and sentences can be interpreted in various ways.
+
+                    Among the well-known poems in Korea, the first verse picked four especially famous poems.
+                    
+                    But wouldn't it be more fun to learn about Hangul together than just looking at it?
+
+                    Make a morpheme by turning a dial that
+                    can change the combination of 'Initial consonants', 'Medial vowels', and 'Final consonants', and complete the first phrase.
+                    
+                    Soon, you will be able to learn more about Hangul and Korean expressions.
+
+                    The characteristics of Hangeul, which create a single 'morphism' through the combination of 'Initial consonants', 'Medial vowels', and 'Final consonants'
+                    
+                    I'd be very happy if I got interested.
+
+                    Enjoy Catch a Phrase!
+                    """
+                )
+                .font(.custom("LibreBaskerville-Regular", size: 24))
+                .foregroundColor(CustomColor.gray06)
+                .multilineTextAlignment(.leading)
+            }
+        }
+        .padding(24)
     }
 }

@@ -15,7 +15,7 @@ class GlobalStore: ObservableObject {
     /**
      split 된 첫 줄을 맞춘 진행상황을 비교하기 위한 배열
      */
-    private var correctedFirstPhrases: [String] = [] {
+    var correctedFirstPhrases: [String] = [] {
         didSet {
             if correctedFirstPhrases.count == currentFirstPhrases.count {
                 phrasesCount = 0
@@ -45,7 +45,8 @@ class GlobalStore: ObservableObject {
         }
     }
     
-    
+    @Published
+    var isLanguageKr = true
     
     /**
      다이얼에 사용되는 Charcter
@@ -108,7 +109,6 @@ extension GlobalStore {
                 }
             }
         } else {
-            print("틀려씀")
             isWrongAnswerSubmited = 0.9
         }
     }
@@ -132,5 +132,9 @@ extension GlobalStore {
         correctWord = ""
         isFinished = false
         stopReadContentToSiri()
+    }
+    
+    func toggleLanguage() {
+        isLanguageKr.toggle()
     }
 }
