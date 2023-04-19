@@ -33,7 +33,7 @@ struct CanvasView: View {
 
 // MARK: Views
 extension CanvasView {
-    func CanvasContainerView() -> some View {
+    private func CanvasContainerView() -> some View {
         GeometryReader { geomtery in
             if #available(iOS 16.0, *) {
                     if geomtery.size.width > 834 {
@@ -42,6 +42,7 @@ extension CanvasView {
                                 .frame(minWidth: geomtery.size.width * 0.3,
                                        maxWidth: globalStore.isFinished ? .infinity : geomtery.size.width * 0.3,
                                        maxHeight: .infinity)
+                                .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0), value: globalStore.isFinished)
                                 .background(CustomColor.gray01)
                                 .cornerRadius(4)
                                 .zIndex(1)
@@ -70,6 +71,19 @@ extension CanvasView {
                                             globalStore.resetDialStatus()
                                             
                                         }
+                                        Spacer()
+                                        VStack {
+                                            Image(systemName: "lock.fill")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 24, height: 24)
+                                                .foregroundColor(CustomColor.black)
+                                            Text("\(globalStore.correctedFirstPhrases.count) / \(globalStore.currentFirstPhrases.count)")
+                                        }
+                                        .frame(maxWidth: 40, maxHeight: 40)
+                                        .opacity(globalStore.isFinished ? 0 : 1)
+                                        Spacer()
+                                        PlayInfoButtonView()
                                     }
                                     .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
                                 }
@@ -85,6 +99,7 @@ extension CanvasView {
                                            minHeight: iOS ? 0 : geomtery.size.width * 0.3,
                                            maxHeight: globalStore.isFinished ? .infinity : iOS ? 0 : geomtery.size.width * 0.3
                                            )
+                                    .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0), value: globalStore.isFinished)
                                     .background(CustomColor.gray01)
                                     .cornerRadius(4)
                                     .zIndex(1)

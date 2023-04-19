@@ -97,7 +97,7 @@ extension ContentView {
 
 
 extension ContentView {
-    var AppDescriptionView: some View {
+    private var AppDescriptionView: some View {
         VStack {
             ScrollView {
                 Text(

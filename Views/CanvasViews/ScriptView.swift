@@ -18,6 +18,7 @@ struct ScriptView: View {
     @EnvironmentObject
     var poemStore: PoemStore
     
+
     @State
     private var scrollOffset = CGPoint()
     
@@ -40,18 +41,21 @@ struct ScriptView: View {
 
 // MARK: Views
 extension ScriptView {
-    var ScriptHeaderView: some View {
+    private var ScriptHeaderView: some View {
         HStack(alignment: .top) {
             BackButtonView {
                 presentationMode.wrappedValue.dismiss()
                 globalStore.resetDialStatus()
                 
             }
+            Spacer()
+            PlayInfoButtonView()
         }
         .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
     }
     
-    var PoemScriptView: some View {
+    
+    private var PoemScriptView: some View {
         let poem = poemStore.poems[globalStore.currentPoemIndex]
         
         return ZStack(alignment: .bottomLeading) {
@@ -72,7 +76,7 @@ extension ScriptView {
                     .scaledToFit()
                     .frame(width: 64, height: 64)
                     .foregroundColor(CustomColor.black)
-                Text("\(globalStore.currentFirstPhrases.count) / \(globalStore.correctedFirstPhrases.count)")
+                Text("\(globalStore.correctedFirstPhrases.count) / \(globalStore.currentFirstPhrases.count)")
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .opacity(globalStore.isFinished ? 0 : 1)
@@ -80,14 +84,14 @@ extension ScriptView {
         .frame(alignment: .bottomLeading)
     }
     
-    var PoemDetailInfoView: some View {
+    private var PoemDetailInfoView: some View {
         let poem = poemStore.poems[globalStore.currentPoemIndex]
 
         return CustomText(value: globalStore.isLanguageKr ? "\(poem.krInfo.0) (\(poem.krInfo.2))" : "\(poem.enInfo.0) (\(poem.enInfo.2))", fontSize: 18)
             .foregroundColor(CustomColor.black)
     }
     
-    var ScriptFooterView: some View {
+    private var ScriptFooterView: some View {
         let poem = poemStore.poems[globalStore.currentPoemIndex]
         let iOS = globalStore.deviceOS == "iOS"
         return HStack(alignment: .center) {
@@ -104,7 +108,16 @@ extension ScriptView {
                 .background(CustomColor.siri_btn)
                 .cornerRadius(50)
                 Button {
-                    globalStore.readContentToSiri(contents: poem.krInfo.1)
+                    if globalStore.isSiriSpeaking {
+                        globalStore.stopReadContentToSiri()
+                    } else {
+                        if globalStore.isLanguageKr {
+                            globalStore.readContentToSiri(contents: poem.krInfo.1, nil)
+                        } else {
+                            globalStore.readContentToSiri(contents: poem.enInfo.1, "en-US")
+                        }
+                    }
+
                 } label: {
                     Image(systemName: "play.fill")
                         .foregroundColor(CustomColor.black)

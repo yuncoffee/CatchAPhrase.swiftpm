@@ -46,7 +46,7 @@ class PoemStore: ObservableObject {
         """,
         "Yu Chi-hwan"
         ),
-        firstPhrase: "이",
+        firstPhrase: "가",
         thumbChar: "가")
     private let poemB = PoemInfo(
         krInfo: (
@@ -107,7 +107,7 @@ class PoemStore: ObservableObject {
         """,
         "Kim Dong-Myung"
         ),
-        firstPhrase: "가",
+        firstPhrase: "내 마음은 호수요",
         thumbChar: "나")
     private let poemC = PoemInfo(
         krInfo: (
@@ -152,7 +152,7 @@ class PoemStore: ObservableObject {
         """,
         "Kim Sowol"
         ),
-        firstPhrase: "나 보기가 역겨워 가실 때에는 말없이 고이 보내 드리우리다",
+        firstPhrase: "나 보기가 역겨워",
         thumbChar: "다")
     private let poemD = PoemInfo(
         krInfo: (
@@ -215,7 +215,7 @@ class PoemStore: ObservableObject {
         """,
         "Lee Hyeong-Gi"
         ),
-        firstPhrase: "가야할 때가 언제인가를 분명히 알고 가는 이의 뒷모습은 얼마나 아름다운가",
+        firstPhrase: "가야할 때가 언제인가를",
         thumbChar: "라")
     
     init() {

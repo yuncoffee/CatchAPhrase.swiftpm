@@ -37,7 +37,7 @@ struct DialView: View {
 // MARK: View
 extension DialView {
     
-    var CurrentDialView: some View {
+    private var CurrentDialView: some View {
         GeometryReader { geometry in
             ZStack {
                 let ios = globalStore.deviceOS == "iOS"
@@ -47,15 +47,12 @@ extension DialView {
                     .gesture(rotationLeft)
                     .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: dialStore.totalRotates[0])
                     .position(x: ios ? -132 : -60, y: geometry.size.height / 2 - 24)
-
-                
                 // right
                 CharDialView
                     .rotationEffect(Angle(degrees: Double(-dialStore.totalRotates[1].height)))
                     .gesture(rotationRight)
                     .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: dialStore.totalRotates[1])
                     .position(x: ios ? geometry.size.width + 132 : geometry.size.width + 60, y: geometry.size.height / 2 - 24)
-
                 // btm
                 CharDialView
                     .rotationEffect(Angle(degrees: Double(dialStore.totalRotates[2].width)))
@@ -65,12 +62,21 @@ extension DialView {
                 CharBoxView(krScalers: $dialStore.krScalers)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2 - 24)
                     .zIndex(-1)
+                Image(systemName: "arrow.up.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 40, height: 40)
+                    .foregroundColor(CustomColor.gray05)
+                    .offset(y: dialStore.isShowAnimation ? -8 : 0)
+                    .animation(.easeIn(duration: 0.4).repeatForever( autoreverses: true), value: dialStore.isShowAnimation)
+                    .opacity(dialStore.isShowAnimation ? 1 : 0)
+                    
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
-    var CurrentScriptHeaderView: some View {
+    private var CurrentScriptHeaderView: some View {
         GeometryReader { geometry in
 
             HStack(spacing: 0) {
@@ -98,7 +104,7 @@ extension DialView {
         .padding(.vertical, 16)
     }
     
-    var CharDialView: some View {
+    private var CharDialView: some View {
         ZStack {
             ForEach(0..<360) { deg in
                 let isMarkableTic = deg % 4 == 0
@@ -118,7 +124,7 @@ extension DialView {
 
 // MARK: Gesutre Info
 extension DialView {
-    var rotationLeft: some Gesture {
+    private var rotationLeft: some Gesture {
         DragGesture()
             .onChanged { value in
                 dialStore.totalRotates[0].height = value.translation.height + dialStore.currentRotates[0].height
@@ -128,7 +134,7 @@ extension DialView {
                 dialStore.currentRotates[0] = dialStore.totalRotates[0]
             }
     }
-    var rotationRight: some Gesture {
+    private var rotationRight: some Gesture {
         DragGesture()
             .onChanged { value in
                 dialStore.totalRotates[1].height = value.translation.height + dialStore.currentRotates[1].height
@@ -138,7 +144,7 @@ extension DialView {
                 dialStore.currentRotates[1] = dialStore.totalRotates[1]
             }
     }
-    var rotationBtm: some Gesture {
+    private var rotationBtm: some Gesture {
         DragGesture()
             .onChanged { value in
                 dialStore.totalRotates[2].width = value.translation.width + dialStore.currentRotates[2].width

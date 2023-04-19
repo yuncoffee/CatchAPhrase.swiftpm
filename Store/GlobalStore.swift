@@ -81,6 +81,9 @@ class GlobalStore: ObservableObject {
     var isFinished = false
     
     @Published
+    var isSiriSpeaking = false
+    
+    @Published
     var isWrongAnswerSubmited: CGFloat = 1 {
         didSet {
             if isWrongAnswerSubmited == 0.9 {
@@ -113,15 +116,17 @@ extension GlobalStore {
         }
     }
     
-    func readContentToSiri(contents: String) {
+    func readContentToSiri(contents: String, _ language: String?) {
         let speechUtterance = AVSpeechUtterance(string: contents)
-        speechUtterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")
+        speechUtterance.voice = AVSpeechSynthesisVoice(language: language ?? "ko-KR")
         speechSynthesizer.speak(speechUtterance)
+        isSiriSpeaking = true
         
     }
     
     func stopReadContentToSiri() {
         speechSynthesizer.stopSpeaking(at: .immediate)
+        isSiriSpeaking = false
     }
     
     func resetDialStatus() {
@@ -136,5 +141,9 @@ extension GlobalStore {
     
     func toggleLanguage() {
         isLanguageKr.toggle()
+    }
+    
+    func isiOS () -> Bool {
+        return deviceOS == "iOS"
     }
 }

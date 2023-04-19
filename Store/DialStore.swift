@@ -24,6 +24,18 @@ class DialStore: ObservableObject {
         }
     }
 
+    @Published
+    var isShowAnimation = false{
+        didSet {
+            
+            if isShowAnimation {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
+                    self.isShowAnimation = false
+                }
+            }
+        }
+    }
+
     
     
     @Published
@@ -100,6 +112,12 @@ extension DialStore {
             : String(firstScaler).appending(String(secondaryScaler)).appending(String(thirdScaler))
 
             globalStore.currentCharcter = char
+            
+            if globalStore.currentCharcter.count > 0 && globalStore.correctYetWord.count > 0 &&   globalStore.currentCharcter[globalStore.currentCharcter.startIndex] == globalStore.correctYetWord[globalStore.correctYetWord.startIndex] {
+                isShowAnimation = true
+            } else {
+                isShowAnimation = false
+            }
         }
     }
 }

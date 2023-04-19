@@ -2,7 +2,7 @@ import SwiftUI
 
 @main
 struct MyApp: App {
-    
+        
     let globalStore = GlobalStore()
     
     init() {

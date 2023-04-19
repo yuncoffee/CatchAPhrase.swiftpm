@@ -49,7 +49,7 @@ struct CharBoxView: View {
 
 // MARK: Views
 extension CharBoxView {
-    var boxContentsView: some View {
+    private var boxContentsView: some View {
         let ios = globalStore.deviceOS == "iOS"
         
         return CustomText(value: globalStore.currentCharcter, fontSize: draggedOffset.height < -100 ? 64 : ios ? 160 : 200)
@@ -59,11 +59,11 @@ extension CharBoxView {
             .opacity(isSubmitAble ? 0 : 1)
     }
     
-    var ReadCurrentCharView: some View {
+    private var ReadCurrentCharView: some View {
         let ios = globalStore.deviceOS == "iOS"
         
         return Button {
-            globalStore.readContentToSiri(contents: globalStore.currentCharcter)
+            globalStore.readContentToSiri(contents: globalStore.currentCharcter, nil)
         } label: {
             Image(systemName: "play.fill")
                 .foregroundColor(CustomColor.black)
@@ -78,7 +78,7 @@ extension CharBoxView {
 
 // MARK: Gesture
 extension CharBoxView {
-    var drag: some Gesture {
+    private var drag: some Gesture {
       DragGesture()
         .onChanged { gesture in
             translationY = gesture.translation.height
