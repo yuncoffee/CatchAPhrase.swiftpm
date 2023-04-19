@@ -39,11 +39,7 @@ class GlobalStore: ObservableObject {
      device os info
      */
     @Published
-    var deviceOS = UIDevice.current.systemName  {
-        didSet {
-            print(deviceOS)
-        }
-    }
+    var deviceOS = UIDevice.current.systemName
     
     @Published
     var isLanguageKr = true

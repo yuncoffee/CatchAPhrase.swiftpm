@@ -55,7 +55,7 @@ extension DialView {
                     .position(x: ios ? geometry.size.width + 132 : geometry.size.width + 60, y: geometry.size.height / 2 - 24)
                 // btm
                 CharDialView
-                    .rotationEffect(Angle(degrees: Double(dialStore.totalRotates[2].width)))
+                    .rotationEffect(Angle(degrees: Double(-dialStore.totalRotates[2].width)))
                     .gesture(rotationBtm)
                     .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: dialStore.totalRotates[2])
                     .position(x: geometry.size.width / 2, y: ios ? geometry.size.height / 2 + 340 : geometry.size.height / 2 + 360)
@@ -66,7 +66,7 @@ extension DialView {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 40, height: 40)
-                    .foregroundColor(CustomColor.gray05)
+                    .foregroundColor(.green)
                     .offset(y: dialStore.isShowAnimation ? -8 : 0)
                     .animation(.easeIn(duration: 0.4).repeatForever( autoreverses: true), value: dialStore.isShowAnimation)
                     .opacity(dialStore.isShowAnimation ? 1 : 0)

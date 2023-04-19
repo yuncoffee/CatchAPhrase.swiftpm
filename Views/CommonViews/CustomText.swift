@@ -11,9 +11,15 @@ struct CustomText: View {
     
     var value = ""
     var fontSize = 64
-
+    var style = CustomFontStyle.Kr
+    
     var body: some View {
         Text(value)
-            .font(Font.custom("NanumMyeongjo-YetHangul", size: CGFloat(fontSize)))
+            .font(Font.custom(style.rawValue, size: CGFloat(fontSize)))
     }
+}
+
+enum CustomFontStyle: String {
+    case Kr = "NanumMyeongjo-YetHangul"
+    case En = "LibreBaskerville-Regular"
 }

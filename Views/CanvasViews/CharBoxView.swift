@@ -25,7 +25,6 @@ struct CharBoxView: View {
         didSet {
             let ios = globalStore.deviceOS == "iOS"
             let offset: Double = ios ? -240 : -320
-            print(translationY)
             if translationY < offset {
                 isSubmitAble = true
             }

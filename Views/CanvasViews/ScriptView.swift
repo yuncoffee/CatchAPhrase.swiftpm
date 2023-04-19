@@ -87,7 +87,9 @@ extension ScriptView {
     private var PoemDetailInfoView: some View {
         let poem = poemStore.poems[globalStore.currentPoemIndex]
 
-        return CustomText(value: globalStore.isLanguageKr ? "\(poem.krInfo.0) (\(poem.krInfo.2))" : "\(poem.enInfo.0) (\(poem.enInfo.2))", fontSize: 18)
+        return CustomText(value: globalStore.isLanguageKr ? "\(poem.krInfo.0) (\(poem.krInfo.2))" : "\(poem.enInfo.0) (\(poem.enInfo.2))",
+                          fontSize: 18,
+                          style: globalStore.isLanguageKr ? .Kr : .En)
             .foregroundColor(CustomColor.black)
     }
     

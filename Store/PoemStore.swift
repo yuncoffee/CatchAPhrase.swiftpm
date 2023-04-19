@@ -46,7 +46,7 @@ class PoemStore: ObservableObject {
         """,
         "Yu Chi-hwan"
         ),
-        firstPhrase: "가",
+        firstPhrase: "이것은 소리없는 아우성",
         thumbChar: "가")
     private let poemB = PoemInfo(
         krInfo: (
