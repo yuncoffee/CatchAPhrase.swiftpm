@@ -9,6 +9,7 @@ import SwiftUI
 import AVFoundation
 
 struct ScriptView: View {
+    
     @Environment(\.presentationMode)
     var presentationMode
 
@@ -27,7 +28,7 @@ struct ScriptView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            if globalStore.deviceOS != "iOS" {
+            if !globalStore.checkIsiOS() {
                 ScriptHeaderView
             }
             PoemScriptView
@@ -41,6 +42,8 @@ struct ScriptView: View {
 
 // MARK: Views
 extension ScriptView {
+    
+    // MARK: ScriptHeaderView
     private var ScriptHeaderView: some View {
         HStack(alignment: .top) {
             BackButtonView {
@@ -54,13 +57,15 @@ extension ScriptView {
         .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
     }
     
-    
+    // MARK: PoemScriptView
     private var PoemScriptView: some View {
         let poem = poemStore.poems[globalStore.currentPoemIndex]
         
         return ZStack(alignment: .bottomLeading) {
             OffsetObservingScrollView(offset: $scrollOffset, length: $baseScrollOffset) {
-                CustomText(value: globalStore.isLanguageKr ? poem.krInfo.1 : poem.enInfo.1, fontSize: 24)
+                CustomText(value: globalStore.isLanguageKr ? poem.krInfo.1 : poem.enInfo.1,
+                           fontSize: 24,
+                           style: globalStore.isLanguageKr ? .Kr : .En)
                     .foregroundColor(
                         globalStore.isFinished
                             ? CustomColor.gray06
@@ -84,6 +89,7 @@ extension ScriptView {
         .frame(alignment: .bottomLeading)
     }
     
+    // MARK: PoemDetailInfoView
     private var PoemDetailInfoView: some View {
         let poem = poemStore.poems[globalStore.currentPoemIndex]
 
@@ -95,7 +101,7 @@ extension ScriptView {
     
     private var ScriptFooterView: some View {
         let poem = poemStore.poems[globalStore.currentPoemIndex]
-        let iOS = globalStore.deviceOS == "iOS"
+        let iOS = globalStore.checkIsiOS()
         return HStack(alignment: .center) {
             PoemDetailInfoView
             Spacer()

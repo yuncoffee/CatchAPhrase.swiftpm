@@ -59,11 +59,11 @@ class DialStore: ObservableObject {
             }
             if prevRotates[2].width + 32 < totalRotates[2].width {
                 prevRotates[2] = totalRotates[2]
-                krScalers[2] += 1
+                krScalers[2] -= 1
             }
             if prevRotates[2].width - 32 > totalRotates[2].width {
                 prevRotates[2] = totalRotates[2]
-                krScalers[2] -= 1
+                krScalers[2] += 1
             }
         }
     }

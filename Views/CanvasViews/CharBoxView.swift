@@ -23,7 +23,7 @@ struct CharBoxView: View {
     @State
     private var translationY = 0.0 {
         didSet {
-            let ios = globalStore.deviceOS == "iOS"
+            let ios = globalStore.checkIsiOS()
             let offset: Double = ios ? -240 : -320
             if translationY < offset {
                 isSubmitAble = true
@@ -35,11 +35,11 @@ struct CharBoxView: View {
     private var isSubmitAble = false
 
     var body: some View {
-        let ios = globalStore.deviceOS == "iOS"
+        let ios = globalStore.checkIsiOS()
         
         ZStack() {
             BoxDecorationView(size: ios ? 240 : 320)
-            boxContentsView
+            BoxContentsView
             ReadCurrentCharView
         }
         .frame(width: 320, height: 320)
@@ -48,8 +48,10 @@ struct CharBoxView: View {
 
 // MARK: Views
 extension CharBoxView {
-    private var boxContentsView: some View {
-        let ios = globalStore.deviceOS == "iOS"
+    
+    // MARK: BoxContentsView
+    private var BoxContentsView: some View {
+        let ios = globalStore.checkIsiOS()
         
         return CustomText(value: globalStore.currentCharcter, fontSize: draggedOffset.height < -100 ? 64 : ios ? 160 : 200)
             .offset(draggedOffset)
@@ -58,8 +60,9 @@ extension CharBoxView {
             .opacity(isSubmitAble ? 0 : 1)
     }
     
+    // MARK: ReadCurrentCharView
     private var ReadCurrentCharView: some View {
-        let ios = globalStore.deviceOS == "iOS"
+        let ios = globalStore.checkIsiOS()
         
         return Button {
             globalStore.readContentToSiri(contents: globalStore.currentCharcter, nil)

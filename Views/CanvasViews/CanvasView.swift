@@ -33,6 +33,7 @@ struct CanvasView: View {
 
 // MARK: Views
 extension CanvasView {
+    // MARK: CanvasContainerView
     private func CanvasContainerView() -> some View {
         GeometryReader { geomtery in
             if #available(iOS 16.0, *) {
@@ -62,14 +63,15 @@ extension CanvasView {
                         
                     } else {
                         ZStack {
-                            let iOS = globalStore.deviceOS == "iOS"
+                            let iOS = globalStore.checkIsiOS()
                             VStack {
-                                if iOS {
+                                iOSOnlyContainerView(
+                                    globalStore: globalStore,
+                                    iOSOnlyView: AnyView(
                                     HStack(alignment: .top) {
                                         BackButtonView {
                                             presentationMode.wrappedValue.dismiss()
                                             globalStore.resetDialStatus()
-                                            
                                         }
                                         Spacer()
                                         VStack {
@@ -86,7 +88,7 @@ extension CanvasView {
                                         PlayInfoButtonView()
                                     }
                                     .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
-                                }
+                                ))
                                 DialView()
                                     .frame(
                                         maxWidth: .infinity,

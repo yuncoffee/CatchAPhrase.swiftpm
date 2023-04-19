@@ -37,10 +37,11 @@ struct DialView: View {
 // MARK: View
 extension DialView {
     
+    // MARK: CurrentDialView
     private var CurrentDialView: some View {
         GeometryReader { geometry in
             ZStack {
-                let ios = globalStore.deviceOS == "iOS"
+                let ios = globalStore.checkIsiOS()
                 // left
                 CharDialView
                     .rotationEffect(Angle(degrees: Double(dialStore.totalRotates[0].height)))
@@ -55,7 +56,7 @@ extension DialView {
                     .position(x: ios ? geometry.size.width + 132 : geometry.size.width + 60, y: geometry.size.height / 2 - 24)
                 // btm
                 CharDialView
-                    .rotationEffect(Angle(degrees: Double(-dialStore.totalRotates[2].width)))
+                    .rotationEffect(Angle(degrees: Double(dialStore.totalRotates[2].width)))
                     .gesture(rotationBtm)
                     .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: dialStore.totalRotates[2])
                     .position(x: geometry.size.width / 2, y: ios ? geometry.size.height / 2 + 340 : geometry.size.height / 2 + 360)
@@ -76,16 +77,15 @@ extension DialView {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
+    // MARK: CurrentScriptHeaderView
     private var CurrentScriptHeaderView: some View {
         GeometryReader { geometry in
 
             HStack(spacing: 0) {
-                Text(globalStore.correctWord)
-                    .font(.custom("NanumMyeongjo-YetHangul", size: 64))
+                CustomText(value: globalStore.correctWord, fontSize: 64)
                     .foregroundColor(CustomColor.black)
                     .multilineTextAlignment(.center)
-                Text(globalStore.correctYetWord)
-                    .font(Font.custom("NanumMyeongjo-YetHangul", size:64))
+                CustomText(value: globalStore.correctYetWord, fontSize: 64)
                     .foregroundColor(isAnimationStart ? .red : CustomColor.gray03)
                     .multilineTextAlignment(.center)
             }
@@ -104,6 +104,7 @@ extension DialView {
         .padding(.vertical, 16)
     }
     
+    // MARK: CharDialView
     private var CharDialView: some View {
         ZStack {
             ForEach(0..<360) { deg in

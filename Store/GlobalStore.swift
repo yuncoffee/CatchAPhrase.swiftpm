@@ -139,7 +139,7 @@ extension GlobalStore {
         isLanguageKr.toggle()
     }
     
-    func isiOS () -> Bool {
-        return deviceOS == "iOS"
+    func checkIsiOS () -> Bool {
+        deviceOS == "iOS"
     }
 }

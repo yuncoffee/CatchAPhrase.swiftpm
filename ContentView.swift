@@ -9,7 +9,7 @@ struct ContentView: View {
     var showDetail = false
     
     @State
-    private var showPopover: Bool = false
+    private var showPopover = false
 
     
     var body: some View {
@@ -23,12 +23,11 @@ struct ContentView: View {
 
 // MARK: Views
 extension ContentView {
-    
+    // MARK: StartButtonView
     var StartButtonView: some View {
         NavigationLink(destination: MenuView(globalStore: globalStore), isActive: $showDetail) {
             Button(action: { self.showDetail = true }) {
-                Text("Start")
-                    .font(.custom("LibreBaskerville-Regular", size: 48))
+                CustomText(value: "Start", fontSize: 48, style: .En)
                     .frame(width: 320, height: 80)
                     .border(CustomColor.gray03, width: 2)
                     .foregroundColor(CustomColor.gray06)
@@ -37,25 +36,7 @@ extension ContentView {
         }
     }
     
-    var HomeTitleView: some View {
-        ZStack {
-            if globalStore.deviceOS == "iOS" {
-                BoxDecorationView()
-            } else {
-                HStack(spacing: -4) {
-                    ForEach(0..<2) { _ in
-                        BoxDecorationView()
-                    }
-                }
-            }
-            Text("Catch a phrase")
-                .font(.custom("LibreBaskerville-Regular", size: 64))
-                .multilineTextAlignment(.center)
-                
-        }
-        .padding(.bottom, globalStore.deviceOS == "iOS" ? 32 : 100)
-    }
-    
+    // MARK: HomeContainerView
     func HomeContainerView (_ homeTitleView: any View, _ startButtonView: any View) -> some View {
         GeometryReader { geometry in
             if #available(iOS 16.0, *)
@@ -93,43 +74,61 @@ extension ContentView {
             }
         }
     }
-}
-
-
-extension ContentView {
+    
+    // MARK: HomeTitleView
+    var HomeTitleView: some View {
+        ZStack {
+            iOSOnlyContainerView(
+                globalStore: globalStore,
+                iOSOnlyView: AnyView(BoxDecorationView()),
+                notOnlyiOSView:
+                    AnyView(
+                        HStack(spacing: -4) {
+                            ForEach(0..<2) { _ in
+                                BoxDecorationView()
+                            }
+                        }
+                    ))
+            CustomText(value: "Catch a phrase", fontSize: 64, style: .En)
+                .multilineTextAlignment(.center)
+                
+        }
+        .padding(.bottom, globalStore.checkIsiOS() ? 32 : 100)
+    }
+    
+    // MARK: AppDescriptionView
     private var AppDescriptionView: some View {
         VStack {
             ScrollView {
-                Text(
-                    """
-                    Hello, I’m Coffee.
-                    
-                    I'd like to introduce interesting Korean and contents in Korean to you.
-                    
-                    There are various Korean contents, but among them,
-                    I will introduce Korean poems where words and sentences can be interpreted in various ways.
+                CustomText(value:
+                """
+                Hello, I’m Coffee.
+                
+                I'd like to introduce interesting Korean and contents in Korean to you.
+                
+                There are various Korean contents, but among them,
+                I will introduce Korean poems where words and sentences can be interpreted in various ways.
 
-                    Among the well-known poems in Korea, the first verse picked four especially famous poems.
-                    
-                    But wouldn't it be more fun to learn about Hangul together than just looking at it?
+                Among the well-known poems in Korea, the first verse picked four especially famous poems.
+                
+                But wouldn't it be more fun to learn about Hangul together than just looking at it?
 
-                    Make a morpheme by turning a dial that
-                    can change the combination of 'Initial consonants', 'Medial vowels', and 'Final consonants', and complete the first phrase.
-                    
-                    Soon, you will be able to learn more about Hangul and Korean expressions.
+                Make a morpheme by turning a dial that
+                can change the combination of 'Initial consonants', 'Medial vowels', and 'Final consonants', and complete the first phrase.
+                
+                Soon, you will be able to learn more about Hangul and Korean expressions.
 
-                    The characteristics of Hangeul, which create a single 'morphism' through the combination of 'Initial consonants', 'Medial vowels', and 'Final consonants'
-                    
-                    I'd be very happy if I got interested.
+                The characteristics of Hangeul, which create a single 'morphism' through the combination of 'Initial consonants', 'Medial vowels', and 'Final consonants'
+                
+                I'd be very happy if I got interested.
 
-                    Enjoy Catch a Phrase!
-                    """
-                )
-                .font(.custom("LibreBaskerville-Regular", size: 24))
+                Enjoy Catch a Phrase!
+                """, fontSize: 24, style: .En)
                 .foregroundColor(CustomColor.gray06)
                 .multilineTextAlignment(.leading)
             }
         }
         .padding(24)
     }
+
 }
