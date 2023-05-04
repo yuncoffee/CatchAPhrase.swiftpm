@@ -20,8 +20,8 @@ let package = Package(
             teamIdentifier: "V7Y39HNV38",
             displayVersion: "1.0",
             bundleVersion: "1",
-            appIcon: .placeholder(icon: .star),
-            accentColor: .presetColor(.yellow),
+            appIcon: .asset("AppIcon"),
+            accentColor: .presetColor(.blue),
             supportedDeviceFamilies: [
                 .pad,
                 .phone
@@ -31,7 +31,8 @@ let package = Package(
                 .landscapeRight,
                 .landscapeLeft,
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
-            ]
+            ],
+            appCategory: .lifestyle
         )
     ],
     targets: [
